@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>セキュリティ警告 - Microsoft Defender</title>
+    <title>IT詐欺啓蒙サイト - ブラウザ上の脅威を学ぶ</title>
     <style>
       * {
         margin: 0;
@@ -13,414 +13,473 @@
 
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #0078d4;
-        overflow: hidden;
-      }
-
-      .warning-container {
-        background-color: white;
-        max-width: 800px;
-        margin: 50px auto;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        overflow: hidden;
-      }
-
-      .warning-header {
-        background-color: #d32f2f;
-        color: white;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
         padding: 20px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
       }
 
-      .warning-icon {
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        color: white;
+        margin-bottom: 50px;
+        padding: 40px 20px;
+      }
+
+      header h1 {
         font-size: 48px;
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
       }
 
-      .warning-title {
-        flex: 1;
+      header p {
+        font-size: 20px;
+        opacity: 0.95;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.6;
       }
 
-      .warning-title h1 {
+      .warning-banner {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-left: 6px solid #ff6b6b;
+        padding: 20px 30px;
+        margin-bottom: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .warning-banner h2 {
+        color: #d32f2f;
+        margin-bottom: 10px;
         font-size: 24px;
-        margin-bottom: 5px;
       }
 
-      .warning-title p {
+      .warning-banner p {
+        color: #333;
+        line-height: 1.6;
+        font-size: 16px;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .card-header {
+        padding: 30px;
+        color: white;
+        text-align: center;
+      }
+
+      .card-header.scareware {
+        background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+      }
+
+      .card-header.browser-locker {
+        background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
+      }
+
+      .card-header.phishing {
+        background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+      }
+
+      .card-header.fake-support {
+        background: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%);
+      }
+
+      .card-icon {
+        font-size: 64px;
+        margin-bottom: 15px;
+      }
+
+      .card-header h3 {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+
+      .card-header p {
         font-size: 14px;
         opacity: 0.9;
       }
 
-      .warning-body {
+      .card-body {
         padding: 30px;
       }
 
-      .threat-info {
-        background-color: #fff3cd;
-        border-left: 4px solid #ffc107;
-        padding: 15px;
+      .card-body h4 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .card-body ul {
+        list-style: none;
         margin-bottom: 20px;
       }
 
-      .threat-info h2 {
-        color: #856404;
-        font-size: 18px;
-        margin-bottom: 10px;
+      .card-body li {
+        padding: 8px 0;
+        color: #555;
+        position: relative;
+        padding-left: 25px;
       }
 
-      .threat-details {
-        margin: 20px 0;
-      }
-
-      .threat-details table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      .threat-details td {
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-      }
-
-      .threat-details td:first-child {
-        font-weight: bold;
-        width: 200px;
-        color: #333;
-      }
-
-      .threat-details td:last-child {
-        color: #d32f2f;
-      }
-
-      .scanning {
-        margin: 20px 0;
-      }
-
-      .progress-bar {
-        width: 100%;
-        height: 30px;
-        background-color: #e0e0e0;
-        border-radius: 4px;
-        overflow: hidden;
-        margin-top: 10px;
-      }
-
-      .progress-fill {
-        height: 100%;
-        background-color: #d32f2f;
-        width: 0%;
-        transition: width 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
+      .card-body li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #4caf50;
         font-weight: bold;
       }
 
-      .action-buttons {
-        display: flex;
-        gap: 15px;
-        margin-top: 30px;
+      .card-footer {
+        padding: 0 30px 30px;
       }
 
       .btn {
-        padding: 12px 30px;
-        font-size: 16px;
+        display: block;
+        width: 100%;
+        padding: 15px;
         border: none;
-        border-radius: 4px;
-        cursor: pointer;
+        border-radius: 6px;
+        font-size: 16px;
         font-weight: bold;
-        transition: background-color 0.3s;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+        color: white;
       }
 
       .btn-danger {
         background-color: #d32f2f;
-        color: white;
-        flex: 1;
       }
 
       .btn-danger:hover {
         background-color: #b71c1c;
       }
 
-      .btn-secondary {
-        background-color: #757575;
-        color: white;
-        flex: 1;
+      .btn-warning {
+        background-color: #f57c00;
       }
 
-      .btn-secondary:hover {
-        background-color: #616161;
+      .btn-warning:hover {
+        background-color: #e65100;
       }
 
-      .blinking {
-        animation: blink 1s infinite;
+      .btn-info {
+        background-color: #1976d2;
       }
 
-      @keyframes blink {
-        0%,
-        50%,
-        100% {
-          opacity: 1;
-        }
-        25%,
-        75% {
-          opacity: 0.5;
-        }
+      .btn-info:hover {
+        background-color: #0d47a1;
       }
 
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
+      .btn-purple {
+        background-color: #7b1fa2;
       }
 
-      .modal-content {
-        background-color: white;
+      .btn-purple:hover {
+        background-color: #4a148c;
+      }
+
+      .btn-disabled {
+        background-color: #bdbdbd;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .btn-disabled:hover {
+        background-color: #bdbdbd;
+      }
+
+      .info-section {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
         padding: 40px;
-        border-radius: 8px;
-        max-width: 600px;
+        margin-top: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .info-section h2 {
+        color: #333;
+        margin-bottom: 25px;
+        font-size: 32px;
         text-align: center;
       }
 
-      .modal-content h2 {
-        color: #0078d4;
-        margin-bottom: 20px;
+      .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
       }
 
-      .modal-content p {
+      .tip-card {
+        background-color: #f5f5f5;
+        padding: 25px;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+      }
+
+      .tip-card h3 {
+        color: #667eea;
+        margin-bottom: 12px;
+        font-size: 20px;
+      }
+
+      .tip-card p {
+        color: #555;
         line-height: 1.6;
-        color: #333;
-        margin-bottom: 15px;
       }
 
-      .educational-note {
-        background-color: #e3f2fd;
-        border-left: 4px solid #2196f3;
-        padding: 15px;
-        margin-top: 20px;
-        text-align: left;
+      footer {
+        text-align: center;
+        color: white;
+        margin-top: 60px;
+        padding: 30px;
+        opacity: 0.9;
       }
 
-      .educational-note h3 {
-        color: #1976d2;
-        margin-bottom: 10px;
-      }
-
-      .educational-note ul {
-        margin-left: 20px;
-        color: #333;
-      }
-
-      .educational-note li {
+      footer p {
         margin: 5px 0;
       }
 
-      .disclaimer {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        background-color: rgba(0, 0, 0, 0.7);
+      .coming-soon {
+        position: relative;
+      }
+
+      .coming-soon::after {
+        content: "準備中";
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background-color: #ff9800;
         color: white;
-        padding: 10px 15px;
-        border-radius: 4px;
+        padding: 5px 12px;
+        border-radius: 20px;
         font-size: 12px;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        header h1 {
+          font-size: 32px;
+        }
+
+        header p {
+          font-size: 16px;
+        }
+
+        .card-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .tips-grid {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="warning-container">
-      <div class="warning-header">
-        <div class="warning-icon blinking">⚠️</div>
-        <div class="warning-title">
-          <h1>Microsoft Defender セキュリティ警告</h1>
-          <p>重大な脅威が検出されました</p>
-        </div>
+    <div class="container">
+      <header>
+        <h1>🛡️ IT詐欺啓蒙サイト</h1>
+        <p>
+          ブラウザ上で行われる詐欺行為を安全に体験し、その手口と対策を学びましょう。
+          <br />
+          すべてのコンテンツは教育目的で作成されており、実害はありません。
+        </p>
+      </header>
+
+      <div class="warning-banner">
+        <h2>⚠️ 重要な注意事項</h2>
+        <p>
+          このサイトは、IT詐欺の手口を理解し、被害を防ぐための教育目的で作成されています。
+          <br />
+          各デモページは実際の詐欺行為を模していますが、完全に安全であり、個人情報の収集やマルウェアの配布は一切行いません。
+          <br />
+          <strong
+            >実際に詐欺に遭遇した場合は、絶対にボタンをクリックしたり個人情報を入力したりせず、ブラウザを閉じてください。</strong
+          >
+        </p>
       </div>
 
-      <div class="warning-body">
-        <div class="threat-info">
-          <h2>⚠️ お使いのコンピューターが危険にさらされています</h2>
-          <p>
-            複数のウイルスとマルウェアが検出されました。直ちに対処が必要です。
-          </p>
-        </div>
-
-        <div class="threat-details">
-          <table>
-            <tr>
-              <td>検出された脅威:</td>
-              <td>Trojan:Win32/Wacatac.B!ml</td>
-            </tr>
-            <tr>
-              <td>脅威レベル:</td>
-              <td>深刻 - 即座の対応が必要</td>
-            </tr>
-            <tr>
-              <td>影響を受けるファイル:</td>
-              <td>237個のファイル</td>
-            </tr>
-            <tr>
-              <td>検出時刻:</td>
-              <td id="detection-time"></td>
-            </tr>
-            <tr>
-              <td>IPアドレス:</td>
-              <td id="ip-address">取得中...</td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="scanning">
-          <h3>システムスキャン中...</h3>
-          <div class="progress-bar">
-            <div class="progress-fill" id="progress">0%</div>
+      <div class="card-grid">
+        <!-- スケアウェア -->
+        <div class="card">
+          <div class="card-header scareware">
+            <div class="card-icon">⚠️</div>
+            <h3>スケアウェア</h3>
+            <p>Scareware / 偽のウイルス警告</p>
+          </div>
+          <div class="card-body">
+            <h4>このデモで学べること:</h4>
+            <ul>
+              <li>突然表示される偽のセキュリティ警告</li>
+              <li>Microsoft Defenderを装った画面</li>
+              <li>煽り文句の特徴</li>
+              <li>リアルタイム情報で信憑性を演出する手口</li>
+              <li>見分け方と対処法</li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <a href="scareware.html" class="btn btn-danger">体験する</a>
           </div>
         </div>
 
-        <div class="action-buttons">
-          <button class="btn btn-danger" onclick="showEducationalMessage()">
-            今すぐ削除する（推奨）
-          </button>
-          <button class="btn btn-secondary" onclick="showEducationalMessage()">
-            サポートに連絡
-          </button>
+        <!-- ブラウザロッカー -->
+        <div class="card coming-soon">
+          <div class="card-header browser-locker">
+            <div class="card-icon">🔒</div>
+            <h3>ブラウザロッカー</h3>
+            <p>Browser Locker / ブラウザの動作妨害</p>
+          </div>
+          <div class="card-body">
+            <h4>このデモで学べること:</h4>
+            <ul>
+              <li>ブラウザを閉じられなくする手法</li>
+              <li>無限ループによるタブの生成</li>
+              <li>全画面表示による閉じ込め</li>
+              <li>音声やアラートの乱用</li>
+              <li>正しい対処方法</li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-warning btn-disabled" disabled>
+              準備中
+            </button>
+          </div>
+        </div>
+
+        <!-- フィッシング -->
+        <div class="card coming-soon">
+          <div class="card-header phishing">
+            <div class="card-icon">🎣</div>
+            <h3>フィッシング詐欺</h3>
+            <p>Phishing / 偽のログインページ</p>
+          </div>
+          <div class="card-body">
+            <h4>このデモで学べること:</h4>
+            <ul>
+              <li>本物そっくりの偽サイト</li>
+              <li>URLの巧妙な偽装手法</li>
+              <li>個人情報窃取の手口</li>
+              <li>SSL証明書の確認方法</li>
+              <li>公式サイトとの見分け方</li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-info btn-disabled" disabled>準備中</button>
+          </div>
+        </div>
+
+        <!-- 偽サポート -->
+        <div class="card coming-soon">
+          <div class="card-header fake-support">
+            <div class="card-icon">📞</div>
+            <h3>偽サポート詐欺</h3>
+            <p>Tech Support Scam / サポート詐欺</p>
+          </div>
+          <div class="card-body">
+            <h4>このデモで学べること:</h4>
+            <ul>
+              <li>偽のサポート窓口への誘導</li>
+              <li>電話番号表示の手口</li>
+              <li>リモートアクセス要求の危険性</li>
+              <li>有料ソフトウェア購入への誘導</li>
+              <li>正規サポートとの違い</li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-purple btn-disabled" disabled>
+              準備中
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="modal" id="educational-modal">
-      <div class="modal-content">
-        <h2>🎓 これは教育用のデモサイトです</h2>
-        <p>
-          <strong>ご注意:</strong>
-          このページはスケアウェア（偽の警告）のデモンストレーションです。
-        </p>
-        <p>
-          実際にはウイルスは検出されておらず、あなたのコンピューターは安全です。
-        </p>
+      <div class="info-section">
+        <h2>💡 IT詐欺から身を守るための基本知識</h2>
 
-        <div class="educational-note">
-          <h3>スケアウェアの見分け方:</h3>
-          <ul>
-            <li>突然の警告画面の表示</li>
-            <li>過度に煽るような文言（「今すぐ」「緊急」など）</li>
-            <li>不自然な日本語や文法ミス</li>
-            <li>正規のセキュリティソフトとは異なるデザイン</li>
-            <li>電話番号への誘導やソフトウェアのダウンロードを促す</li>
-            <li>ブラウザ上での警告（本物のセキュリティソフトはOS上で動作）</li>
-          </ul>
+        <div class="tips-grid">
+          <div class="tip-card">
+            <h3>1. 冷静に判断する</h3>
+            <p>
+              突然の警告や緊急を装うメッセージは、ほとんどが詐欺です。焦らず、まず疑うことが大切です。
+            </p>
+          </div>
+
+          <div class="tip-card">
+            <h3>2. URLを確認する</h3>
+            <p>
+              公式サイトのURLを事前に確認し、ブックマークからアクセスしましょう。検索結果からのアクセスも危険な場合があります。
+            </p>
+          </div>
+
+          <div class="tip-card">
+            <h3>3. 個人情報を入力しない</h3>
+            <p>
+              不審なサイトでは絶対に個人情報やクレジットカード情報を入力しないでください。
+            </p>
+          </div>
+
+          <div class="tip-card">
+            <h3>4. ソフトウェアをダウンロードしない</h3>
+            <p>
+              警告画面から直接ソフトウェアをダウンロードしないでください。公式サイトから入手しましょう。
+            </p>
+          </div>
+
+          <div class="tip-card">
+            <h3>5. 正規のセキュリティソフトを使う</h3>
+            <p>
+              信頼できるセキュリティソフトを導入し、常に最新の状態に保ちましょう。
+            </p>
+          </div>
+
+          <div class="tip-card">
+            <h3>6. 不審な場合はブラウザを閉じる</h3>
+            <p>
+              閉じられない場合は、タスクマネージャー（Ctrl+Shift+Esc）からブラウザを強制終了しましょう。
+            </p>
+          </div>
         </div>
-
-        <div class="educational-note">
-          <h3>遭遇した場合の対処法:</h3>
-          <ul>
-            <li>ボタンをクリックしない</li>
-            <li>個人情報を入力しない</li>
-            <li>
-              ブラウザのタブを閉じる（閉じられない場合はブラウザを強制終了）
-            </li>
-            <li>不安な場合は、正規のセキュリティソフトでスキャンを実施</li>
-          </ul>
-        </div>
-
-        <button
-          class="btn btn-danger"
-          onclick="closeModal()"
-          style="margin-top: 20px"
-        >
-          理解しました
-        </button>
       </div>
+
+      <footer>
+        <p>
+          <strong>教育目的のデモサイト</strong>
+        </p>
+        <p>
+          このサイトのすべてのコンテンツは、IT詐欺の手口を理解し、被害を防ぐための教育目的で作成されています。
+        </p>
+        <p>実際の詐欺行為には十分ご注意ください。</p>
+        <p style="margin-top: 20px; font-size: 14px">
+          &copy; 2025 IT詐欺啓蒙プロジェクト
+        </p>
+      </footer>
     </div>
-
-    <div class="disclaimer">教育目的のデモサイトです</div>
-
-    <script>
-      // 現在時刻を表示
-      const now = new Date();
-      document.getElementById("detection-time").textContent =
-        now.toLocaleString("ja-JP");
-
-      // IPアドレスを取得（実際のIPを表示してリアリティを出す）
-      fetch("https://api.ipify.org?format=json")
-        .then((response) => response.json())
-        .then((data) => {
-          document.getElementById("ip-address").textContent = data.ip;
-        })
-        .catch(() => {
-          document.getElementById("ip-address").textContent = "192.168.1.xxx";
-        });
-
-      // プログレスバーのアニメーション
-      let progress = 0;
-      const progressBar = document.getElementById("progress");
-
-      const progressInterval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(progressInterval);
-        }
-        progressBar.style.width = progress + "%";
-        progressBar.textContent = Math.floor(progress) + "%";
-      }, 500);
-
-      // アラート音を鳴らす（オプション）
-      const audioContext = new (window.AudioContext ||
-        window.webkitAudioContext)();
-
-      function playWarningSound() {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        oscillator.frequency.value = 800;
-        oscillator.type = "sine";
-
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(
-          0.01,
-          audioContext.currentTime + 0.5
-        );
-
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
-      }
-
-      // ページ読み込み時に警告音を鳴らす
-      document.addEventListener(
-        "click",
-        function () {
-          playWarningSound();
-        },
-        { once: true }
-      );
-
-      // 教育メッセージを表示
-      function showEducationalMessage() {
-        document.getElementById("educational-modal").style.display = "flex";
-      }
-
-      function closeModal() {
-        document.getElementById("educational-modal").style.display = "none";
-      }
-
-      // 3秒後に自動的に教育メッセージを表示
-      setTimeout(() => {
-        showEducationalMessage();
-      }, 3000);
-    </script>
   </body>
 </html>
