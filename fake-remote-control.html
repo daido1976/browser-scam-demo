@@ -26,23 +26,17 @@
       /* カスタムカーソル */
       .custom-cursor {
         position: fixed;
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
         pointer-events: none;
         z-index: 10000;
-        transition: transform 0.05s ease;
+        transform-origin: top left;
       }
 
-      .custom-cursor::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        border-left: 12px solid white;
-        border-right: 8px solid transparent;
-        border-top: 8px solid white;
-        border-bottom: 12px solid transparent;
-        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+      .custom-cursor svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
       }
 
       /* デスクトップアイコン */
@@ -482,7 +476,29 @@
     </div>
 
     <!-- カスタムカーソル -->
-    <div class="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor" id="customCursor">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <!-- カーソルの本体（白） -->
+        <path
+          d="M3 3 L3 17 L7.5 12.5 L10 18 L12 17 L9.5 11.5 L15 11 Z"
+          fill="white"
+          stroke="black"
+          stroke-width="0.5"
+        />
+        <!-- カーソルの影 -->
+        <path
+          d="M3 3 L3 17 L7.5 12.5 L10 18 L12 17 L9.5 11.5 L15 11 Z"
+          fill="none"
+          stroke="rgba(0,0,0,0.3)"
+          stroke-width="1"
+          transform="translate(0.5, 0.5)"
+        />
+      </svg>
+    </div>
 
     <!-- デスクトップアイコン -->
     <div class="desktop-icons">
@@ -774,26 +790,74 @@
         }, 20000);
       }
 
-      // カーソルをアニメーション
+      // カーソルをアニメーション（より人間らしい動きに）
       function animateCursor(targetX, targetY, duration) {
         const startX = cursorX;
         const startY = cursorY;
         const startTime = Date.now();
 
+        // ランダムな揺らぎを追加するための制御点
+        const controlPoints = [];
+        const numPoints = Math.floor(duration / 100); // 100msごとに制御点
+
+        for (let i = 0; i < numPoints; i++) {
+          const progress = i / numPoints;
+          const baseX = startX + (targetX - startX) * progress;
+          const baseY = startY + (targetY - startY) * progress;
+
+          // ランダムな揺らぎを追加（±5ピクセル）
+          const offsetX = (Math.random() - 0.5) * 10;
+          const offsetY = (Math.random() - 0.5) * 10;
+
+          controlPoints.push({
+            x: baseX + offsetX,
+            y: baseY + offsetY,
+          });
+        }
+
+        // 最終地点は正確に
+        controlPoints.push({ x: targetX, y: targetY });
+
         function animate() {
           const elapsed = Date.now() - startTime;
           const progress = Math.min(elapsed / duration, 1);
 
-          // イージング関数
-          const eased = 1 - Math.pow(1 - progress, 3);
+          // イージング関数（より滑らかに）
+          const eased =
+            progress < 0.5
+              ? 2 * progress * progress
+              : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 
-          cursorX = startX + (targetX - startX) * eased;
-          cursorY = startY + (targetY - startY) * eased;
+          // 制御点に基づいた位置計算
+          const pointIndex = eased * (controlPoints.length - 1);
+          const lowerIndex = Math.floor(pointIndex);
+          const upperIndex = Math.min(
+            lowerIndex + 1,
+            controlPoints.length - 1
+          );
+          const localProgress = pointIndex - lowerIndex;
+
+          const point1 = controlPoints[lowerIndex];
+          const point2 = controlPoints[upperIndex];
+
+          cursorX = point1.x + (point2.x - point1.x) * localProgress;
+          cursorY = point1.y + (point2.y - point1.y) * localProgress;
+
+          // わずかなランダムジッターを追加（さらにリアルに）
+          if (progress < 0.95) {
+            cursorX += (Math.random() - 0.5) * 1;
+            cursorY += (Math.random() - 0.5) * 1;
+          }
 
           updateCursor();
 
           if (progress < 1) {
             requestAnimationFrame(animate);
+          } else {
+            // 最終位置で微調整（人間がマウスを止める時の動き）
+            cursorX = targetX;
+            cursorY = targetY;
+            updateCursor();
           }
         }
 
