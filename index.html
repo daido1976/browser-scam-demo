@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>セキュリティ警告 - Microsoft Defender</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0078d4;
+        overflow: hidden;
+      }
+
+      .warning-container {
+        background-color: white;
+        max-width: 800px;
+        margin: 50px auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+
+      .warning-header {
+        background-color: #d32f2f;
+        color: white;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .warning-icon {
+        font-size: 48px;
+      }
+
+      .warning-title {
+        flex: 1;
+      }
+
+      .warning-title h1 {
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+
+      .warning-title p {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .warning-body {
+        padding: 30px;
+      }
+
+      .threat-info {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+
+      .threat-info h2 {
+        color: #856404;
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .threat-details {
+        margin: 20px 0;
+      }
+
+      .threat-details table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .threat-details td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .threat-details td:first-child {
+        font-weight: bold;
+        width: 200px;
+        color: #333;
+      }
+
+      .threat-details td:last-child {
+        color: #d32f2f;
+      }
+
+      .scanning {
+        margin: 20px 0;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 30px;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background-color: #d32f2f;
+        width: 0%;
+        transition: width 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+      }
+
+      .btn {
+        padding: 12px 30px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+      }
+
+      .btn-danger {
+        background-color: #d32f2f;
+        color: white;
+        flex: 1;
+      }
+
+      .btn-danger:hover {
+        background-color: #b71c1c;
+      }
+
+      .btn-secondary {
+        background-color: #757575;
+        color: white;
+        flex: 1;
+      }
+
+      .btn-secondary:hover {
+        background-color: #616161;
+      }
+
+      .blinking {
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        50%,
+        100% {
+          opacity: 1;
+        }
+        25%,
+        75% {
+          opacity: 0.5;
+        }
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: white;
+        padding: 40px;
+        border-radius: 8px;
+        max-width: 600px;
+        text-align: center;
+      }
+
+      .modal-content h2 {
+        color: #0078d4;
+        margin-bottom: 20px;
+      }
+
+      .modal-content p {
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .educational-note {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin-top: 20px;
+        text-align: left;
+      }
+
+      .educational-note h3 {
+        color: #1976d2;
+        margin-bottom: 10px;
+      }
+
+      .educational-note ul {
+        margin-left: 20px;
+        color: #333;
+      }
+
+      .educational-note li {
+        margin: 5px 0;
+      }
+
+      .disclaimer {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="warning-container">
+      <div class="warning-header">
+        <div class="warning-icon blinking">⚠️</div>
+        <div class="warning-title">
+          <h1>Microsoft Defender セキュリティ警告</h1>
+          <p>重大な脅威が検出されました</p>
+        </div>
+      </div>
+
+      <div class="warning-body">
+        <div class="threat-info">
+          <h2>⚠️ お使いのコンピューターが危険にさらされています</h2>
+          <p>
+            複数のウイルスとマルウェアが検出されました。直ちに対処が必要です。
+          </p>
+        </div>
+
+        <div class="threat-details">
+          <table>
+            <tr>
+              <td>検出された脅威:</td>
+              <td>Trojan:Win32/Wacatac.B!ml</td>
+            </tr>
+            <tr>
+              <td>脅威レベル:</td>
+              <td>深刻 - 即座の対応が必要</td>
+            </tr>
+            <tr>
+              <td>影響を受けるファイル:</td>
+              <td>237個のファイル</td>
+            </tr>
+            <tr>
+              <td>検出時刻:</td>
+              <td id="detection-time"></td>
+            </tr>
+            <tr>
+              <td>IPアドレス:</td>
+              <td id="ip-address">取得中...</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="scanning">
+          <h3>システムスキャン中...</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress">0%</div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-danger" onclick="showEducationalMessage()">
+            今すぐ削除する（推奨）
+          </button>
+          <button class="btn btn-secondary" onclick="showEducationalMessage()">
+            サポートに連絡
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="educational-modal">
+      <div class="modal-content">
+        <h2>🎓 これは教育用のデモサイトです</h2>
+        <p>
+          <strong>ご注意:</strong>
+          このページはスケアウェア（偽の警告）のデモンストレーションです。
+        </p>
+        <p>
+          実際にはウイルスは検出されておらず、あなたのコンピューターは安全です。
+        </p>
+
+        <div class="educational-note">
+          <h3>スケアウェアの見分け方:</h3>
+          <ul>
+            <li>突然の警告画面の表示</li>
+            <li>過度に煽るような文言（「今すぐ」「緊急」など）</li>
+            <li>不自然な日本語や文法ミス</li>
+            <li>正規のセキュリティソフトとは異なるデザイン</li>
+            <li>電話番号への誘導やソフトウェアのダウンロードを促す</li>
+            <li>ブラウザ上での警告（本物のセキュリティソフトはOS上で動作）</li>
+          </ul>
+        </div>
+
+        <div class="educational-note">
+          <h3>遭遇した場合の対処法:</h3>
+          <ul>
+            <li>ボタンをクリックしない</li>
+            <li>個人情報を入力しない</li>
+            <li>
+              ブラウザのタブを閉じる（閉じられない場合はブラウザを強制終了）
+            </li>
+            <li>不安な場合は、正規のセキュリティソフトでスキャンを実施</li>
+          </ul>
+        </div>
+
+        <button
+          class="btn btn-danger"
+          onclick="closeModal()"
+          style="margin-top: 20px"
+        >
+          理解しました
+        </button>
+      </div>
+    </div>
+
+    <div class="disclaimer">教育目的のデモサイトです</div>
+
+    <script>
+      // 現在時刻を表示
+      const now = new Date();
+      document.getElementById("detection-time").textContent =
+        now.toLocaleString("ja-JP");
+
+      // IPアドレスを取得（実際のIPを表示してリアリティを出す）
+      fetch("https://api.ipify.org?format=json")
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("ip-address").textContent = data.ip;
+        })
+        .catch(() => {
+          document.getElementById("ip-address").textContent = "192.168.1.xxx";
+        });
+
+      // プログレスバーのアニメーション
+      let progress = 0;
+      const progressBar = document.getElementById("progress");
+
+      const progressInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(progressInterval);
+        }
+        progressBar.style.width = progress + "%";
+        progressBar.textContent = Math.floor(progress) + "%";
+      }, 500);
+
+      // アラート音を鳴らす（オプション）
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+
+      function playWarningSound() {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = 800;
+        oscillator.type = "sine";
+
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          audioContext.currentTime + 0.5
+        );
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+      }
+
+      // ページ読み込み時に警告音を鳴らす
+      document.addEventListener(
+        "click",
+        function () {
+          playWarningSound();
+        },
+        { once: true }
+      );
+
+      // 教育メッセージを表示
+      function showEducationalMessage() {
+        document.getElementById("educational-modal").style.display = "flex";
+      }
+
+      function closeModal() {
+        document.getElementById("educational-modal").style.display = "none";
+      }
+
+      // 3秒後に自動的に教育メッセージを表示
+      setTimeout(() => {
+        showEducationalMessage();
+      }, 3000);
+    </script>
+  </body>
+</html>
