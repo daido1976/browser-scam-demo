@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amazon.co.jp - サインイン</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f2;
+        min-height: 100vh;
+      }
+
+      .header {
+        background-color: #131921;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .logo {
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        text-decoration: none;
+      }
+
+      .logo-image {
+        width: 100px;
+        height: 31px;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 3px;
+        color: #ff9900;
+        font-weight: bold;
+        font-size: 20px;
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 40px auto;
+        padding: 20px;
+      }
+
+      .login-box {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 30px;
+        margin-bottom: 20px;
+      }
+
+      .login-box h1 {
+        font-size: 28px;
+        font-weight: 400;
+        margin-bottom: 20px;
+        color: #111;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #111;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #a6a6a6;
+        border-radius: 3px;
+        font-size: 14px;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #e77600;
+        box-shadow: 0 0 3px 2px rgba(228, 121, 17, 0.5);
+      }
+
+      .submit-btn {
+        width: 100%;
+        background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
+        border: 1px solid #a88734;
+        border-radius: 3px;
+        padding: 10px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .submit-btn:hover {
+        background: linear-gradient(to bottom, #f5d78e, #edb933);
+      }
+
+      .help-links {
+        margin-top: 20px;
+        font-size: 13px;
+      }
+
+      .help-links a {
+        color: #0066c0;
+        text-decoration: none;
+      }
+
+      .help-links a:hover {
+        color: #c45500;
+        text-decoration: underline;
+      }
+
+      .new-customer {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e7e7e7;
+      }
+
+      .new-customer p {
+        font-size: 13px;
+        color: #767676;
+        margin-bottom: 10px;
+      }
+
+      .create-account-btn {
+        width: 100%;
+        background: linear-gradient(to bottom, #f7f8fa, #e7e9ec);
+        border: 1px solid #adb1b8;
+        border-radius: 3px;
+        padding: 10px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .create-account-btn:hover {
+        background: linear-gradient(to bottom, #e7e9ec, #d5d9dd);
+      }
+
+      .footer {
+        margin-top: 40px;
+        padding: 30px 20px;
+        background-color: white;
+        border-top: 1px solid #e7e7e7;
+      }
+
+      .footer-links {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .footer-links a {
+        color: #0066c0;
+        text-decoration: none;
+        margin: 0 10px;
+        font-size: 12px;
+      }
+
+      .footer-text {
+        text-align: center;
+        color: #555;
+        font-size: 11px;
+      }
+
+      .warning-indicator {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(255, 0, 0, 0.8);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 12px;
+        z-index: 1000;
+      }
+
+      .url-bar-fake {
+        background-color: #e8f0fe;
+        padding: 15px 20px;
+        border-bottom: 1px solid #ccc;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .url-bar-fake .lock-icon {
+        color: #5f6368;
+        margin-right: 8px;
+      }
+
+      .url-bar-fake .url {
+        color: #202124;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: white;
+        padding: 40px;
+        border-radius: 8px;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow-y: auto;
+        text-align: center;
+      }
+
+      .modal-content h2 {
+        color: #0078d4;
+        margin-bottom: 20px;
+      }
+
+      .modal-content p {
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .educational-note {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: left;
+      }
+
+      .educational-note h3 {
+        color: #856404;
+        margin-bottom: 15px;
+      }
+
+      .educational-note ul {
+        margin-left: 20px;
+        color: #333;
+      }
+
+      .educational-note li {
+        margin: 8px 0;
+      }
+
+      .educational-note.blue {
+        background-color: #e3f2fd;
+        border-left-color: #2196f3;
+      }
+
+      .educational-note.blue h3 {
+        color: #1976d2;
+      }
+
+      .close-btn {
+        background-color: #0078d4;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      .close-btn:hover {
+        background-color: #005a9e;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin: 20px;
+        color: #0066c0;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+
+      .suspicious-indicators {
+        background-color: #ffebee;
+        border-left: 4px solid #f44336;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: left;
+      }
+
+      .suspicious-indicators h3 {
+        color: #c62828;
+        margin-bottom: 15px;
+      }
+
+      .suspicious-indicators ul {
+        margin-left: 20px;
+        color: #333;
+      }
+
+      .suspicious-indicators li {
+        margin: 10px 0;
+      }
+
+      .suspicious-indicators strong {
+        color: #c62828;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html" class="back-link">← トップに戻る</a>
+
+    <div class="warning-indicator">教育用デモサイト</div>
+
+    <!-- 偽のURL表示（実際のフィッシングサイトではURLが偽装される） -->
+    <div class="url-bar-fake">
+      <span class="lock-icon">🔓</span>
+      <span class="url">http://amazon-co-jp-signin.example-phishing.com</span>
+      <span style="color: #d93025; margin-left: 10px; font-size: 12px"
+        >⚠️ 安全ではありません</span
+      >
+    </div>
+
+    <div class="header">
+      <div class="logo-image">amazon</div>
+    </div>
+
+    <div class="container">
+      <div class="login-box">
+        <h1>サインイン</h1>
+
+        <form id="login-form" onsubmit="handleSubmit(event)">
+          <div class="form-group">
+            <label for="email">Eメールまたは携帯電話番号</label>
+            <input
+              type="text"
+              id="email"
+              name="email"
+              autocomplete="off"
+              required
+            />
+          </div>
+
+          <button type="submit" class="submit-btn">次に進む</button>
+
+          <div class="help-links">
+            <p style="margin-top: 15px">
+              <a href="#" onclick="showEducation(); return false;"
+                >パスワードをお忘れですか？</a
+              >
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <div class="new-customer">
+        <p>Amazonアカウントをお持ちでないですか？</p>
+        <button class="create-account-btn" onclick="showEducation()">
+          Amazonアカウントを作成
+        </button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-links">
+        <a href="#" onclick="showEducation(); return false;">利用規約</a>
+        <a href="#" onclick="showEducation(); return false;"
+          >プライバシー規約</a
+        >
+        <a href="#" onclick="showEducation(); return false;">ヘルプ</a>
+      </div>
+      <div class="footer-text">
+        © 1996-2025, Amazon.com, Inc. or its affiliates
+      </div>
+    </div>
+
+    <div class="modal" id="education-modal">
+      <div class="modal-content">
+        <h2>🎓 これは教育用のフィッシングデモです</h2>
+        <p>
+          <strong>ご注意:</strong>
+          このページは本物のAmazonサイトではなく、フィッシング詐欺のデモンストレーションです。
+        </p>
+        <p>
+          入力された情報は一切保存されず、どこにも送信されません。あなたの情報は完全に安全です。
+        </p>
+
+        <div class="suspicious-indicators">
+          <h3>このページの怪しいポイント:</h3>
+          <ul>
+            <li>
+              <strong>URL:</strong>
+              正規のAmazonのURLは「https://www.amazon.co.jp」ですが、このページのURLは全く異なります
+            </li>
+            <li>
+              <strong>HTTPSではない:</strong>
+              鍵アイコンが表示されず、「安全ではありません」と警告されています
+            </li>
+            <li>
+              <strong>ドメイン名:</strong>
+              「amazon-co-jp-signin.example-phishing.com」のように、本物に似せたドメイン名
+            </li>
+            <li>
+              <strong>デザインの微妙な違い:</strong>
+              本物に似せていますが、細部が異なることがあります
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-note">
+          <h3>フィッシング詐欺の見分け方:</h3>
+          <ul>
+            <li>
+              <strong>URLを必ず確認:</strong>
+              アドレスバーのURLが公式サイトと完全に一致するか確認
+            </li>
+            <li>
+              <strong>HTTPSを確認:</strong>
+              鍵アイコンが表示され、HTTPSで始まるか確認
+            </li>
+            <li>
+              <strong>ドメイン名に注意:</strong>
+              amazon.co.jp（正規）とamazon-co-jp.com（偽物）の違いに注意
+            </li>
+            <li>
+              <strong>メールのリンクをクリックしない:</strong>
+              メールから直接ログインページに飛ばない
+            </li>
+            <li>
+              <strong>ブックマークを使用:</strong>
+              重要なサイトはブックマークからアクセス
+            </li>
+            <li>
+              <strong>デザインの違和感:</strong>
+              フォントやレイアウトの違いに注意
+            </li>
+            <li>
+              <strong>文法ミス:</strong>
+              不自然な日本語や誤字脱字がないか確認
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-note blue">
+          <h3>よくあるフィッシングの手口:</h3>
+          <ul>
+            <li>
+              <strong>緊急を装うメール:</strong>
+              「アカウントが停止されます」「不正アクセスを検出」などの文言
+            </li>
+            <li>
+              <strong>URLの偽装:</strong>
+              本物に似せたドメイン名（例: amazon.co.jp → amazom.co.jp）
+            </li>
+            <li>
+              <strong>サブドメインの悪用:</strong>
+              amazon.co.jp.example.com（example.comが本当のドメイン）
+            </li>
+            <li>
+              <strong>短縮URLの使用:</strong>
+              bit.lyなどで本当のURLを隠す
+            </li>
+            <li>
+              <strong>公式を装ったメール:</strong>
+              ロゴや署名を使って信頼性を演出
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-note">
+          <h3>もしフィッシングサイトに情報を入力してしまったら:</h3>
+          <ul>
+            <li>
+              <strong>すぐにパスワードを変更:</strong>
+              公式サイトから直接ログインして変更
+            </li>
+            <li>
+              <strong>クレジットカード会社に連絡:</strong>
+              カード情報を入力した場合は即座に連絡
+            </li>
+            <li>
+              <strong>二段階認証を有効化:</strong>
+              アカウントの乗っ取りを防ぐ
+            </li>
+            <li>
+              <strong>取引履歴を確認:</strong>
+              不正な取引がないか定期的にチェック
+            </li>
+            <li>
+              <strong>関係機関に報告:</strong>
+              警察や消費生活センターに相談
+            </li>
+          </ul>
+        </div>
+
+        <button class="close-btn" onclick="closeModal()">
+          理解しました - トップに戻る
+        </button>
+      </div>
+    </div>
+
+    <script>
+      function handleSubmit(event) {
+        event.preventDefault();
+        showEducation();
+        return false;
+      }
+
+      function showEducation() {
+        document.getElementById("education-modal").style.display = "flex";
+      }
+
+      function closeModal() {
+        window.location.href = "index.html";
+      }
+
+      // 3秒後に自動的に教育モーダルを表示
+      setTimeout(() => {
+        showEducation();
+      }, 4000);
+    </script>
+  </body>
+</html>

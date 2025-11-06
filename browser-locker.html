@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>警告 - Windowsセキュリティ</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #1e1e1e;
+        color: white;
+        overflow: hidden;
+      }
+
+      .fullscreen-warning {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      .warning-icon {
+        font-size: 120px;
+        animation: pulse 1s infinite;
+        margin-bottom: 30px;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .warning-content {
+        text-align: center;
+        max-width: 800px;
+        padding: 40px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 12px;
+        border: 3px solid #ff6b6b;
+      }
+
+      .warning-content h1 {
+        font-size: 48px;
+        margin-bottom: 20px;
+        color: #ffeb3b;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .warning-content h2 {
+        font-size: 28px;
+        margin-bottom: 25px;
+        color: #ff6b6b;
+      }
+
+      .warning-content p {
+        font-size: 18px;
+        line-height: 1.8;
+        margin-bottom: 15px;
+      }
+
+      .error-code {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 6px;
+        margin: 25px 0;
+        font-family: "Courier New", monospace;
+        font-size: 16px;
+      }
+
+      .phone-number {
+        font-size: 36px;
+        font-weight: bold;
+        color: #ffeb3b;
+        margin: 30px 0;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        border: 2px solid #ffeb3b;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 30px;
+      }
+
+      .btn {
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .btn-primary {
+        background-color: #ffeb3b;
+        color: #000;
+      }
+
+      .btn-primary:hover {
+        background-color: #fdd835;
+        transform: scale(1.05);
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .btn-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .blinking {
+        animation: blink 0.8s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        50%,
+        100% {
+          opacity: 1;
+        }
+        25%,
+        75% {
+          opacity: 0.3;
+        }
+      }
+
+      .popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        z-index: 10000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .popup-content {
+        background-color: white;
+        color: #333;
+        padding: 50px;
+        border-radius: 12px;
+        max-width: 700px;
+        text-align: center;
+      }
+
+      .popup-content h2 {
+        color: #0078d4;
+        margin-bottom: 25px;
+        font-size: 32px;
+      }
+
+      .popup-content p {
+        line-height: 1.8;
+        margin-bottom: 20px;
+        font-size: 16px;
+      }
+
+      .educational-section {
+        background-color: #e3f2fd;
+        padding: 25px;
+        border-radius: 8px;
+        margin: 25px 0;
+        text-align: left;
+      }
+
+      .educational-section h3 {
+        color: #1976d2;
+        margin-bottom: 15px;
+        font-size: 22px;
+      }
+
+      .educational-section ul {
+        margin-left: 20px;
+        color: #333;
+      }
+
+      .educational-section li {
+        margin: 10px 0;
+        line-height: 1.6;
+      }
+
+      .close-demo-btn {
+        background-color: #0078d4;
+        color: white;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 6px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      .close-demo-btn:hover {
+        background-color: #005a9e;
+      }
+
+      .back-link {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        z-index: 10001;
+      }
+
+      .back-link:hover {
+        background-color: rgba(0, 0, 0, 0.9);
+      }
+
+      .warning-text {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: rgba(0, 0, 0, 0.8);
+        padding: 15px 25px;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html" class="back-link">← トップに戻る</a>
+
+    <div class="fullscreen-warning">
+      <div class="warning-icon blinking">🔒</div>
+      <div class="warning-content">
+        <h1>⚠️ 重大なセキュリティ警告 ⚠️</h1>
+        <h2>お使いのコンピューターがブロックされました</h2>
+        <p>
+          Windowsセキュリティシステムにより、お使いのコンピューターに重大な脅威が検出されました。
+        </p>
+        <p class="blinking" style="color: #ffeb3b; font-weight: bold">
+          ⚠️ このウィンドウを閉じないでください ⚠️
+        </p>
+        <p>
+          個人情報の盗難やデータの損失を防ぐため、直ちにMicrosoftサポートに連絡してください。
+        </p>
+
+        <div class="error-code">
+          エラーコード: #DW6VB36
+          <br />
+          検出された脅威: Trojan Spyware Alert - Error Code: #DW6VB36
+        </div>
+
+        <p style="font-size: 20px; font-weight: bold">
+          以下の番号にお電話ください:
+        </p>
+        <div class="phone-number">☎️ 0120-XXX-XXXX</div>
+
+        <p style="font-size: 14px; opacity: 0.8">
+          マイクロソフト認定技術者が24時間365日対応いたします
+        </p>
+
+        <div class="buttons">
+          <button class="btn btn-primary" onclick="showEducation()">
+            今すぐサポートに連絡
+          </button>
+          <button class="btn btn-secondary" onclick="showEducation()">
+            スキャンを実行
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="warning-text">教育目的のデモです</div>
+
+    <div class="popup-overlay" id="education-popup">
+      <div class="popup-content">
+        <h2>🎓 これは教育用のデモです</h2>
+        <p>
+          <strong>ご注意:</strong>
+          このページはブラウザロッカー（ブラウザの動作を妨害する詐欺）のデモンストレーションです。
+        </p>
+        <p>
+          実際には何も問題は発生しておらず、あなたのコンピューターは完全に安全です。
+        </p>
+
+        <div class="educational-section">
+          <h3>ブラウザロッカーの特徴:</h3>
+          <ul>
+            <li>
+              <strong>全画面表示:</strong>
+              ブラウザを全画面にして、閉じるボタンを隠す
+            </li>
+            <li>
+              <strong>警告音の連続再生:</strong>
+              大音量で警告音を鳴らし続ける
+            </li>
+            <li>
+              <strong>アラートの乱用:</strong>
+              無限にアラートを表示してブラウザ操作を妨害
+            </li>
+            <li>
+              <strong>タブの大量生成:</strong>
+              閉じようとすると新しいタブが開き続ける
+            </li>
+            <li>
+              <strong>緊急性を煽る:</strong>
+              「閉じないでください」という警告で不安を煽る
+            </li>
+            <li>
+              <strong>電話番号への誘導:</strong>
+              サポートを装った詐欺師の電話番号を表示
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-section">
+          <h3>遭遇した場合の対処法:</h3>
+          <ul>
+            <li>
+              <strong>焦らない:</strong> 表示されている警告は偽物です
+            </li>
+            <li>
+              <strong>電話しない:</strong>
+              表示されている電話番号には絶対に電話しない
+            </li>
+            <li>
+              <strong>タスクマネージャーを使用:</strong>
+              Windows: Ctrl+Shift+Esc / Mac: Command+Option+Esc
+            </li>
+            <li>
+              <strong>ブラウザを強制終了:</strong>
+              タスクマネージャーからブラウザプロセスを終了
+            </li>
+            <li>
+              <strong>ブラウザの設定をリセット:</strong>
+              次回起動時に「前回のセッションを復元しない」を選択
+            </li>
+            <li>
+              <strong>セキュリティソフトでスキャン:</strong>
+              念のため正規のセキュリティソフトでスキャンを実施
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-section">
+          <h3>重要なポイント:</h3>
+          <ul>
+            <li>
+              Microsoftやセキュリティ企業が電話番号を表示してサポートを求めることは<strong>絶対にありません</strong>
+            </li>
+            <li>
+              ブラウザ上の警告は、実際のWindowsセキュリティとは<strong>無関係</strong>です
+            </li>
+            <li>
+              本物のセキュリティ警告はOSレベルで表示され、ブラウザを閉じても残ります
+            </li>
+          </ul>
+        </div>
+
+        <button class="close-demo-btn" onclick="closeDemo()">
+          理解しました - デモを終了
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // 警告音を生成
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+
+      function playAlertSound() {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = 1000;
+        oscillator.type = "square";
+
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          audioContext.currentTime + 0.3
+        );
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+      }
+
+      // ユーザーの最初のクリックで音を鳴らす
+      let soundPlayed = false;
+      document.addEventListener("click", function () {
+        if (!soundPlayed) {
+          playAlertSound();
+          soundPlayed = true;
+        }
+      });
+
+      // 教育ポップアップを表示
+      function showEducation() {
+        document.getElementById("education-popup").style.display = "flex";
+      }
+
+      // デモを終了してトップページに戻る
+      function closeDemo() {
+        window.location.href = "index.html";
+      }
+
+      // 5秒後に自動的に教育ポップアップを表示
+      setTimeout(() => {
+        showEducation();
+      }, 5000);
+
+      // Escキーで教育ポップアップを表示（実際のブラウザロッカーでは動作しない）
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          showEducation();
+        }
+      });
+    </script>
+  </body>
+</html>

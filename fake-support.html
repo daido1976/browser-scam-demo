@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Windowsサポート - 緊急通知</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f0f0;
+      }
+
+      .header {
+        background: linear-gradient(to right, #0078d4, #00bcf2);
+        color: white;
+        padding: 15px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .windows-logo {
+        width: 40px;
+        height: 40px;
+        background-color: white;
+        color: #0078d4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        border-radius: 4px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .phone-header {
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .alert-banner {
+        background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        animation: pulse-bg 2s infinite;
+      }
+
+      @keyframes pulse-bg {
+        0%,
+        100% {
+          background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+        }
+        50% {
+          background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        }
+      }
+
+      .alert-banner h2 {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .card h3 {
+        color: #0078d4;
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .threat-list {
+        list-style: none;
+      }
+
+      .threat-item {
+        background-color: #fff3cd;
+        border-left: 4px solid #ff6b6b;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+      }
+
+      .threat-item h4 {
+        color: #d32f2f;
+        margin-bottom: 8px;
+      }
+
+      .threat-item p {
+        color: #555;
+        font-size: 14px;
+      }
+
+      .severity-badge {
+        display: inline-block;
+        background-color: #d32f2f;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 10px;
+      }
+
+      .contact-card {
+        background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+        color: white;
+        text-align: center;
+      }
+
+      .contact-card h3 {
+        color: white;
+        font-size: 22px;
+      }
+
+      .phone-number {
+        font-size: 42px;
+        font-weight: bold;
+        margin: 25px 0;
+        padding: 25px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        border: 3px solid white;
+      }
+
+      .call-btn {
+        background-color: #ffeb3b;
+        color: #000;
+        border: none;
+        padding: 18px 40px;
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 20px;
+        transition: all 0.3s;
+      }
+
+      .call-btn:hover {
+        background-color: #fdd835;
+        transform: scale(1.05);
+      }
+
+      .support-info {
+        margin-top: 20px;
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .system-info {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 6px;
+        margin-top: 20px;
+      }
+
+      .system-info h4 {
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .info-row:last-child {
+        border-bottom: none;
+      }
+
+      .info-label {
+        font-weight: bold;
+        color: #555;
+      }
+
+      .info-value {
+        color: #333;
+      }
+
+      .steps-card {
+        grid-column: 1 / -1;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .step {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #0078d4;
+      }
+
+      .step-number {
+        background-color: #0078d4;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+
+      .step h4 {
+        color: #0078d4;
+        margin-bottom: 10px;
+      }
+
+      .step p {
+        color: #555;
+        line-height: 1.6;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: white;
+        padding: 40px;
+        border-radius: 12px;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        text-align: center;
+      }
+
+      .modal-content h2 {
+        color: #0078d4;
+        margin-bottom: 25px;
+        font-size: 32px;
+      }
+
+      .modal-content p {
+        line-height: 1.8;
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 16px;
+      }
+
+      .educational-section {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 25px;
+        margin: 25px 0;
+        text-align: left;
+        border-radius: 6px;
+      }
+
+      .educational-section h3 {
+        color: #856404;
+        margin-bottom: 15px;
+        font-size: 22px;
+      }
+
+      .educational-section ul {
+        margin-left: 20px;
+        color: #333;
+      }
+
+      .educational-section li {
+        margin: 10px 0;
+        line-height: 1.6;
+      }
+
+      .educational-section.blue {
+        background-color: #e3f2fd;
+        border-left-color: #2196f3;
+      }
+
+      .educational-section.blue h3 {
+        color: #1976d2;
+      }
+
+      .educational-section.red {
+        background-color: #ffebee;
+        border-left-color: #f44336;
+      }
+
+      .educational-section.red h3 {
+        color: #c62828;
+      }
+
+      .close-btn {
+        background-color: #0078d4;
+        color: white;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 6px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 25px;
+      }
+
+      .close-btn:hover {
+        background-color: #005a9e;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin: 20px 30px;
+        color: #0078d4;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+
+      .warning-badge {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: rgba(211, 47, 47, 0.9);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        z-index: 999;
+      }
+
+      .blinking {
+        animation: blink 1.5s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+
+        .steps {
+          grid-template-columns: 1fr;
+        }
+
+        .phone-number {
+          font-size: 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html" class="back-link">← トップに戻る</a>
+
+    <div class="header">
+      <div class="header-left">
+        <div class="windows-logo">⊞</div>
+        <h1>Microsoft公式サポート窓口</h1>
+      </div>
+      <div class="phone-header">☎️ 0120-XXX-XXXX</div>
+    </div>
+
+    <div class="alert-banner blinking">
+      <h2>⚠️ 緊急セキュリティアラート ⚠️</h2>
+      <p style="font-size: 18px">
+        お使いのWindowsシステムに重大な脅威が検出されました。今すぐ対処が必要です。
+      </p>
+    </div>
+
+    <div class="container">
+      <div class="main-content">
+        <div class="card">
+          <h3>検出された脅威</h3>
+          <ul class="threat-list">
+            <li class="threat-item">
+              <h4>
+                トロイの木馬
+                <span class="severity-badge">深刻</span>
+              </h4>
+              <p>
+                Trojan:Win32/Wacatac.B!ml
+                が検出されました。個人情報が盗まれる可能性があります。
+              </p>
+            </li>
+            <li class="threat-item">
+              <h4>
+                スパイウェア
+                <span class="severity-badge">深刻</span>
+              </h4>
+              <p>
+                キーストロークを記録し、パスワードやクレジットカード情報を盗むマルウェアです。
+              </p>
+            </li>
+            <li class="threat-item">
+              <h4>
+                ランサムウェア
+                <span class="severity-badge">緊急</span>
+              </h4>
+              <p>
+                ファイルが暗号化される前に対処が必要です。24時間以内にデータが失われる可能性があります。
+              </p>
+            </li>
+          </ul>
+
+          <div class="system-info">
+            <h4>システム情報</h4>
+            <div class="info-row">
+              <span class="info-label">コンピューター名:</span>
+              <span class="info-value" id="computer-name">取得中...</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">IPアドレス:</span>
+              <span class="info-value" id="ip-address">取得中...</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">検出時刻:</span>
+              <span class="info-value" id="detection-time"></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">感染ファイル数:</span>
+              <span class="info-value" style="color: #d32f2f"
+                >347ファイル</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="card contact-card">
+          <h3>今すぐサポートに連絡</h3>
+          <p style="margin: 15px 0">
+            Microsoft認定技術者が<br />24時間365日対応
+          </p>
+
+          <div class="phone-number">☎️ 0120-XXX-XXXX</div>
+
+          <button class="call-btn" onclick="showEducation()">
+            📞 今すぐ電話する
+          </button>
+
+          <div class="support-info">
+            <p>
+              ✓ 通話料無料<br />
+              ✓ 即座に対応可能<br />
+              ✓ リモート修復サービス<br />
+              ✓ 年中無休
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card steps-card">
+        <h3>サポートを受ける手順</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h4>電話で連絡</h4>
+            <p>
+              上記の番号に電話し、表示されているエラーコードを技術者にお伝えください。
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h4>リモート接続</h4>
+            <p>
+              技術者の指示に従い、リモートアクセスソフトをダウンロードしてください。
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h4>問題の診断</h4>
+            <p>
+              技術者がお使いのコンピューターを遠隔で診断し、問題を特定します。
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <h4>修復と保護</h4>
+            <p>
+              ウイルスを除去し、セキュリティソフトをインストールして保護します。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="warning-badge">教育目的のデモサイト</div>
+
+    <div class="modal" id="education-modal">
+      <div class="modal-content">
+        <h2>🎓 これは教育用のデモです</h2>
+        <p>
+          <strong>重要:</strong>
+          このページは偽のテクニカルサポート詐欺のデモンストレーションです。
+        </p>
+        <p>
+          実際には何も問題は発生しておらず、あなたのコンピューターは完全に安全です。
+        </p>
+
+        <div class="educational-section red">
+          <h3>⚠️ 絶対にしてはいけないこと:</h3>
+          <ul>
+            <li>
+              <strong>表示されている電話番号に電話しない</strong> -
+              詐欺師に直接つながります
+            </li>
+            <li>
+              <strong>リモートアクセスソフトをインストールしない</strong> -
+              コンピューターを完全に乗っ取られます
+            </li>
+            <li>
+              <strong>クレジットカード情報を伝えない</strong> -
+              金銭的被害を受けます
+            </li>
+            <li>
+              <strong>個人情報を教えない</strong> -
+              なりすましや二次被害の原因になります
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-section">
+          <h3>偽サポート詐欺の特徴:</h3>
+          <ul>
+            <li>
+              <strong>突然の警告表示:</strong>
+              ブラウザを使っているだけで突然セキュリティ警告が表示される
+            </li>
+            <li>
+              <strong>電話番号の表示:</strong>
+              Microsoftやセキュリティ企業は電話番号を表示して連絡を促すことはありません
+            </li>
+            <li>
+              <strong>緊急性を煽る:</strong>
+              「今すぐ」「24時間以内」など焦らせる文言
+            </li>
+            <li>
+              <strong>具体的な脅威名:</strong>
+              本物のような脅威名やエラーコードを表示
+            </li>
+            <li>
+              <strong>リモートアクセス要求:</strong>
+              TeamViewerやAnyDeskなどのリモート操作ソフトのインストールを求める
+            </li>
+            <li>
+              <strong>有料サービスへの誘導:</strong>
+              高額なセキュリティソフトや保守契約を販売
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-section blue">
+          <h3>本物のMicrosoftサポートとの違い:</h3>
+          <ul>
+            <li>
+              Microsoftは<strong>自動的に電話番号を表示することはありません</strong>
+            </li>
+            <li>
+              本物のサポートは<strong>こちらから連絡しない限り接触してきません</strong>
+            </li>
+            <li>
+              Windowsのセキュリティ警告は<strong>ブラウザではなくOSレベルで表示</strong>されます
+            </li>
+            <li>
+              公式サポートの連絡先は<strong>Microsoft公式サイトで確認</strong>できます
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-section">
+          <h3>遭遇した場合の対処法:</h3>
+          <ul>
+            <li>
+              <strong>電話しない:</strong>
+              表示されている番号には絶対に電話しない
+            </li>
+            <li>
+              <strong>ブラウザを閉じる:</strong>
+              タブを閉じる、またはブラウザごと終了
+            </li>
+            <li>
+              <strong>閉じられない場合:</strong>
+              タスクマネージャー（Ctrl+Shift+Esc）でブラウザを強制終了
+            </li>
+            <li>
+              <strong>正規のセキュリティソフトでスキャン:</strong>
+              念のため既存のセキュリティソフトでスキャンを実施
+            </li>
+            <li>
+              <strong>履歴とキャッシュをクリア:</strong>
+              ブラウザの設定から閲覧履歴を削除
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-section red">
+          <h3>もし電話してしまったら:</h3>
+          <ul>
+            <li>
+              <strong>すぐに電話を切る:</strong>
+              リモートアクセスを許可する前なら被害を最小限に
+            </li>
+            <li>
+              <strong>リモート操作を許可した場合:</strong>
+              即座にインターネット接続を切断
+            </li>
+            <li>
+              <strong>パスワードを変更:</strong>
+              すべての重要なアカウントのパスワードを変更
+            </li>
+            <li>
+              <strong>銀行・カード会社に連絡:</strong>
+              金銭情報を伝えた場合は即座に連絡
+            </li>
+            <li>
+              <strong>警察に相談:</strong>
+              被害届を提出し、記録を残す
+            </li>
+            <li>
+              <strong>消費生活センター（188）に相談:</strong>
+              専門家のアドバイスを受ける
+            </li>
+          </ul>
+        </div>
+
+        <button class="close-btn" onclick="closeModal()">
+          理解しました - トップに戻る
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // 現在時刻を表示
+      const now = new Date();
+      document.getElementById("detection-time").textContent =
+        now.toLocaleString("ja-JP");
+
+      // コンピューター名を設定（実際のものではなくダミー）
+      document.getElementById("computer-name").textContent =
+        "DESKTOP-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+
+      // IPアドレスを取得
+      fetch("https://api.ipify.org?format=json")
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("ip-address").textContent = data.ip;
+        })
+        .catch(() => {
+          document.getElementById("ip-address").textContent = "192.168.1.xxx";
+        });
+
+      function showEducation() {
+        document.getElementById("education-modal").style.display = "flex";
+      }
+
+      function closeModal() {
+        window.location.href = "index.html";
+      }
+
+      // 5秒後に自動的に教育モーダルを表示
+      setTimeout(() => {
+        showEducation();
+      }, 5000);
+
+      // 警告音を鳴らす
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+
+      function playAlertSound() {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = 900;
+        oscillator.type = "sine";
+
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          audioContext.currentTime + 0.4
+        );
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.4);
+      }
+
+      // 最初のクリックで警告音
+      let soundPlayed = false;
+      document.addEventListener("click", function () {
+        if (!soundPlayed) {
+          playAlertSound();
+          soundPlayed = true;
+        }
+      });
+    </script>
+  </body>
+</html>
