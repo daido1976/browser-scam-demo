@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Windows 11</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        cursor: none;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%230078d4;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2300bcf2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23grad)' /%3E%3C/svg%3E")
+          no-repeat center center;
+        background-size: cover;
+        overflow: hidden;
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      /* カスタムカーソル */
+      .custom-cursor {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+        z-index: 10000;
+        transition: transform 0.05s ease;
+      }
+
+      .custom-cursor::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-left: 12px solid white;
+        border-right: 8px solid transparent;
+        border-top: 8px solid white;
+        border-bottom: 12px solid transparent;
+        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+      }
+
+      /* デスクトップアイコン */
+      .desktop-icons {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .desktop-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 80px;
+        padding: 10px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+      }
+
+      .desktop-icon.selected {
+        background-color: rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+
+      .desktop-icon-image {
+        width: 48px;
+        height: 48px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin-bottom: 8px;
+      }
+
+      .desktop-icon-name {
+        color: white;
+        font-size: 12px;
+        text-align: center;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+      }
+
+      /* タスクバー */
+      .taskbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 48px;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(20px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 0 20px;
+        z-index: 1000;
+      }
+
+      .taskbar-icon {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        transition: background-color 0.2s;
+      }
+
+      .taskbar-icon:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .taskbar-icon.active {
+        background-color: rgba(255, 255, 255, 0.3);
+        border-bottom: 3px solid #0078d4;
+      }
+
+      /* ウィンドウ */
+      .window {
+        position: absolute;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        display: none;
+        z-index: 100;
+      }
+
+      .window.active {
+        display: block;
+      }
+
+      .window-titlebar {
+        height: 40px;
+        background-color: #f3f3f3;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 15px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .window-title {
+        font-size: 13px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .window-controls {
+        display: flex;
+        gap: 10px;
+      }
+
+      .window-control-btn {
+        width: 46px;
+        height: 32px;
+        border: none;
+        background-color: transparent;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+      }
+
+      .window-control-btn:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .window-control-btn.close:hover {
+        background-color: #e81123;
+        color: white;
+      }
+
+      .window-content {
+        padding: 20px;
+        height: calc(100% - 40px);
+        overflow: auto;
+      }
+
+      /* CMD ウィンドウ */
+      .cmd-window {
+        background-color: #0c0c0c;
+        color: #cccccc;
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 14px;
+      }
+
+      .cmd-content {
+        padding: 10px;
+        height: calc(100% - 40px);
+      }
+
+      .cmd-line {
+        margin: 2px 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .cmd-prompt {
+        color: #00ff00;
+      }
+
+      .cmd-error {
+        color: #ff0000;
+      }
+
+      .cmd-warning {
+        color: #ffff00;
+      }
+
+      /* ブラウザウィンドウ */
+      .browser-window .window-content {
+        padding: 0;
+      }
+
+      .browser-addressbar {
+        height: 40px;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        gap: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .browser-url {
+        flex: 1;
+        height: 28px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0 10px;
+        font-size: 12px;
+        background-color: white;
+      }
+
+      .browser-content {
+        padding: 20px;
+        background-color: white;
+        height: calc(100% - 80px);
+        overflow: auto;
+      }
+
+      /* 通知 */
+      .notification {
+        position: fixed;
+        bottom: 60px;
+        right: 20px;
+        width: 400px;
+        background-color: rgba(30, 30, 30, 0.95);
+        backdrop-filter: blur(20px);
+        color: white;
+        border-radius: 8px;
+        padding: 15px 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        transform: translateX(450px);
+        transition: transform 0.3s ease;
+        z-index: 2000;
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .notification-title {
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .notification-body {
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      /* モーダル */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        z-index: 5000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: white;
+        padding: 50px;
+        border-radius: 12px;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow-y: auto;
+        text-align: center;
+      }
+
+      .modal-content h2 {
+        color: #0078d4;
+        margin-bottom: 25px;
+        font-size: 32px;
+      }
+
+      .modal-content p {
+        line-height: 1.8;
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 16px;
+      }
+
+      .educational-section {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 25px;
+        margin: 25px 0;
+        text-align: left;
+        border-radius: 6px;
+      }
+
+      .educational-section h3 {
+        color: #856404;
+        margin-bottom: 15px;
+        font-size: 22px;
+      }
+
+      .educational-section ul {
+        margin-left: 20px;
+        color: #333;
+      }
+
+      .educational-section li {
+        margin: 10px 0;
+        line-height: 1.6;
+      }
+
+      .educational-section.blue {
+        background-color: #e3f2fd;
+        border-left-color: #2196f3;
+      }
+
+      .educational-section.blue h3 {
+        color: #1976d2;
+      }
+
+      .close-btn {
+        background-color: #0078d4;
+        color: white;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 6px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 25px;
+      }
+
+      .close-btn:hover {
+        background-color: #005a9e;
+      }
+
+      .back-link {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        z-index: 10001;
+        cursor: pointer;
+      }
+
+      .back-link:hover {
+        background-color: rgba(0, 0, 0, 0.9);
+      }
+
+      .warning-badge {
+        position: fixed;
+        bottom: 60px;
+        left: 20px;
+        background-color: rgba(211, 47, 47, 0.9);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        z-index: 10001;
+      }
+
+      .fullscreen-prompt {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 40px 60px;
+        border-radius: 12px;
+        text-align: center;
+        z-index: 10000;
+      }
+
+      .fullscreen-prompt h2 {
+        margin-bottom: 20px;
+        font-size: 28px;
+      }
+
+      .fullscreen-prompt p {
+        margin-bottom: 30px;
+        line-height: 1.6;
+        font-size: 16px;
+      }
+
+      .fullscreen-btn {
+        background-color: #0078d4;
+        color: white;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 6px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 0 10px;
+      }
+
+      .fullscreen-btn:hover {
+        background-color: #005a9e;
+      }
+
+      .fullscreen-btn.secondary {
+        background-color: #555;
+      }
+
+      .fullscreen-btn.secondary:hover {
+        background-color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html" class="back-link" id="backLink">← トップに戻る</a>
+
+    <div class="fullscreen-prompt" id="fullscreenPrompt">
+      <h2>⚠️ デモを開始します</h2>
+      <p>
+        このデモは全画面表示で最も効果的に動作します。<br />
+        デスクトップが勝手に操作されているように見えますが、<br />
+        すべてブラウザ内で動作しており、実際のシステムには影響しません。
+      </p>
+      <p style="font-size: 14px; color: #ffeb3b">
+        Escキーを押すといつでも全画面表示を終了できます。
+      </p>
+      <button class="fullscreen-btn" onclick="startDemo()">
+        全画面でデモを開始
+      </button>
+      <button class="fullscreen-btn secondary" onclick="startDemoNormal()">
+        通常画面で開始
+      </button>
+    </div>
+
+    <!-- カスタムカーソル -->
+    <div class="custom-cursor" id="customCursor"></div>
+
+    <!-- デスクトップアイコン -->
+    <div class="desktop-icons">
+      <div class="desktop-icon" id="icon-pc">
+        <div class="desktop-icon-image">💻</div>
+        <div class="desktop-icon-name">PC</div>
+      </div>
+      <div class="desktop-icon" id="icon-documents">
+        <div class="desktop-icon-image">📁</div>
+        <div class="desktop-icon-name">ドキュメント</div>
+      </div>
+      <div class="desktop-icon" id="icon-browser">
+        <div class="desktop-icon-image">🌐</div>
+        <div class="desktop-icon-name">Chrome</div>
+      </div>
+    </div>
+
+    <!-- タスクバー -->
+    <div class="taskbar">
+      <div class="taskbar-icon">⊞</div>
+      <div class="taskbar-icon">🔍</div>
+      <div class="taskbar-icon" id="taskbar-cmd">⌨️</div>
+      <div class="taskbar-icon" id="taskbar-browser">🌐</div>
+    </div>
+
+    <!-- CMDウィンドウ -->
+    <div class="window cmd-window" id="cmdWindow">
+      <div class="window-titlebar">
+        <div class="window-title">⌨️ コマンドプロンプト</div>
+        <div class="window-controls">
+          <button class="window-control-btn">―</button>
+          <button class="window-control-btn">□</button>
+          <button class="window-control-btn close">✕</button>
+        </div>
+      </div>
+      <div class="cmd-content" id="cmdContent">
+        <div class="cmd-line">Microsoft Windows [Version 10.0.19045.3803]</div>
+        <div class="cmd-line">
+          (c) Microsoft Corporation. All rights reserved.
+        </div>
+        <div class="cmd-line"></div>
+      </div>
+    </div>
+
+    <!-- ブラウザウィンドウ -->
+    <div class="window browser-window" id="browserWindow">
+      <div class="window-titlebar">
+        <div class="window-title">🌐 Google Chrome</div>
+        <div class="window-controls">
+          <button class="window-control-btn">―</button>
+          <button class="window-control-btn">□</button>
+          <button class="window-control-btn close">✕</button>
+        </div>
+      </div>
+      <div class="browser-addressbar">
+        <span style="font-size: 18px">←</span>
+        <span style="font-size: 18px">→</span>
+        <span style="font-size: 18px">⟳</span>
+        <input
+          type="text"
+          class="browser-url"
+          value="https://www.google.com"
+          readonly
+        />
+      </div>
+      <div class="browser-content" id="browserContent">
+        <h1>Google</h1>
+        <p>検索エンジン</p>
+      </div>
+    </div>
+
+    <!-- 通知 -->
+    <div class="notification" id="notification">
+      <div class="notification-header">
+        <span class="notification-title">セキュリティとメンテナンス</span>
+        <span style="font-size: 12px">たった今</span>
+      </div>
+      <div class="notification-body">
+        リモートアクセスが検出されました。<br />不審なアクティビティを確認してください。
+      </div>
+    </div>
+
+    <div class="warning-badge">教育目的のデモ</div>
+
+    <!-- 教育モーダル -->
+    <div class="modal" id="educationModal">
+      <div class="modal-content">
+        <h2>🎓 これは教育用のデモです</h2>
+        <p>
+          <strong>重要:</strong>
+          このページは、デスクトップが勝手に操作されているように見せる詐欺のデモンストレーションです。
+        </p>
+        <p>
+          実際にはすべてブラウザの全画面表示とJavaScriptのアニメーションで、あなたのコンピューターは一切操作されていません。
+        </p>
+
+        <div class="educational-section">
+          <h3>この手口の特徴:</h3>
+          <ul>
+            <li>
+              <strong>全画面表示の悪用:</strong>
+              ブラウザの全画面APIを使って、本物のデスクトップに見せかける
+            </li>
+            <li>
+              <strong>カーソルの偽装:</strong>
+              カスタムカーソルで、勝手に動いているように見せる
+            </li>
+            <li>
+              <strong>偽のシステム画面:</strong>
+              CMDやブラウザウィンドウを模倣して信憑性を高める
+            </li>
+            <li>
+              <strong>恐怖を煽る:</strong>
+              「リモートアクセス検出」などの通知で不安にさせる
+            </li>
+            <li>
+              <strong>サポート詐欺との組み合わせ:</strong>
+              電話番号を表示して連絡させようとする
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-section blue">
+          <h3>見分け方と対処法:</h3>
+          <ul>
+            <li>
+              <strong>Escキーで終了:</strong>
+              ブラウザの全画面表示はEscキーで簡単に解除できます
+            </li>
+            <li>
+              <strong>本物のタスクマネージャー:</strong>
+              Ctrl+Shift+Escで本物のタスクマネージャーを起動できます
+            </li>
+            <li>
+              <strong>ブラウザ内の動作:</strong>
+              実際のシステム操作はブラウザの外で行われます
+            </li>
+            <li>
+              <strong>カーソルの動きに注目:</strong>
+              本物のリモート操作では、カーソルの動きがより滑らかで自然です
+            </li>
+            <li>
+              <strong>タスクバーの違い:</strong>
+              本物のWindowsタスクバーとは微妙に異なります
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-section">
+          <h3>実際に遭遇した場合:</h3>
+          <ul>
+            <li><strong>焦らない:</strong> これは視覚的なトリックです</li>
+            <li>
+              <strong>Escキーを押す:</strong>
+              全画面表示を解除します
+            </li>
+            <li>
+              <strong>ブラウザを閉じる:</strong>
+              Alt+F4またはタスクマネージャーから
+            </li>
+            <li>
+              <strong>電話しない:</strong>
+              表示されている番号には絶対に電話しない
+            </li>
+            <li>
+              <strong>ソフトをインストールしない:</strong>
+              「修復」のためのソフトは詐欺ツールです
+            </li>
+          </ul>
+        </div>
+
+        <div class="educational-section blue">
+          <h3>本物のリモート操作との違い:</h3>
+          <ul>
+            <li>
+              本物のリモート操作ソフト（TeamViewer、AnyDeskなど）は、<strong>あなたが明示的にインストールして許可</strong>した場合のみ動作します
+            </li>
+            <li>
+              ブラウザを開いただけで勝手にリモート操作されることは<strong
+                >絶対にありません</strong
+              >
+            </li>
+            <li>
+              本物のリモート操作では、画面上に接続中であることを示す<strong>明確な通知</strong>が表示されます
+            </li>
+          </ul>
+        </div>
+
+        <button class="close-btn" onclick="exitDemo()">
+          理解しました - トップに戻る
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let cursorX = window.innerWidth / 2;
+      let cursorY = window.innerHeight / 2;
+      let isAutomated = false;
+      const cursor = document.getElementById("customCursor");
+
+      // カーソル位置を更新
+      function updateCursor() {
+        cursor.style.left = cursorX + "px";
+        cursor.style.top = cursorY + "px";
+      }
+
+      // 実際のマウス位置を追跡
+      document.addEventListener("mousemove", (e) => {
+        if (!isAutomated) {
+          cursorX = e.clientX;
+          cursorY = e.clientY;
+          updateCursor();
+        }
+      });
+
+      // 全画面表示開始
+      function startDemo() {
+        document.documentElement.requestFullscreen().then(() => {
+          document.getElementById("fullscreenPrompt").style.display = "none";
+          document.getElementById("backLink").style.display = "none";
+          beginAutomation();
+        });
+      }
+
+      function startDemoNormal() {
+        document.getElementById("fullscreenPrompt").style.display = "none";
+        beginAutomation();
+      }
+
+      // 自動操作シーケンス
+      function beginAutomation() {
+        isAutomated = true;
+
+        // シーケンス1: 通知を表示
+        setTimeout(() => {
+          document.getElementById("notification").classList.add("show");
+        }, 1000);
+
+        // シーケンス2: PCアイコンに移動してダブルクリック
+        setTimeout(() => {
+          const icon = document.getElementById("icon-pc");
+          const rect = icon.getBoundingClientRect();
+          animateCursor(rect.left + 40, rect.top + 40, 1500);
+        }, 3000);
+
+        setTimeout(() => {
+          document.getElementById("icon-pc").classList.add("selected");
+        }, 4500);
+
+        setTimeout(() => {
+          document.getElementById("icon-pc").classList.remove("selected");
+        }, 5000);
+
+        // シーケンス3: CMDを開く
+        setTimeout(() => {
+          const cmdIcon = document.getElementById("taskbar-cmd");
+          const rect = cmdIcon.getBoundingClientRect();
+          animateCursor(rect.left + 20, rect.top + 20, 1500);
+        }, 6000);
+
+        setTimeout(() => {
+          openCMD();
+        }, 7500);
+
+        // シーケンス4: CMDにコマンドを入力
+        setTimeout(() => {
+          typeCMDCommand();
+        }, 8500);
+
+        // シーケンス5: ブラウザを開く
+        setTimeout(() => {
+          const browserIcon = document.getElementById("taskbar-browser");
+          const rect = browserIcon.getBoundingClientRect();
+          animateCursor(rect.left + 20, rect.top + 20, 1500);
+        }, 13000);
+
+        setTimeout(() => {
+          openBrowser();
+        }, 14500);
+
+        // シーケンス6: ブラウザでURLを変更
+        setTimeout(() => {
+          changeBrowserURL();
+        }, 16000);
+
+        // シーケンス7: 教育モーダルを表示
+        setTimeout(() => {
+          showEducation();
+        }, 20000);
+      }
+
+      // カーソルをアニメーション
+      function animateCursor(targetX, targetY, duration) {
+        const startX = cursorX;
+        const startY = cursorY;
+        const startTime = Date.now();
+
+        function animate() {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          // イージング関数
+          const eased = 1 - Math.pow(1 - progress, 3);
+
+          cursorX = startX + (targetX - startX) * eased;
+          cursorY = startY + (targetY - startY) * eased;
+
+          updateCursor();
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        }
+
+        animate();
+      }
+
+      // CMDウィンドウを開く
+      function openCMD() {
+        const cmdWindow = document.getElementById("cmdWindow");
+        cmdWindow.style.left = "100px";
+        cmdWindow.style.top = "100px";
+        cmdWindow.style.width = "700px";
+        cmdWindow.style.height = "400px";
+        cmdWindow.classList.add("active");
+        document.getElementById("taskbar-cmd").classList.add("active");
+      }
+
+      // CMDコマンドを入力
+      function typeCMDCommand() {
+        const cmdContent = document.getElementById("cmdContent");
+        const commands = [
+          '<div class="cmd-line"><span class="cmd-prompt">C:\\Users\\User></span> netstat -an</div>',
+          '<div class="cmd-line">アクティブな接続</div>',
+          '<div class="cmd-line">  プロトコル  ローカル アドレス    外部アドレス           状態</div>',
+          '<div class="cmd-line">  TCP    192.168.1.100:49152  203.0.113.42:443       ESTABLISHED</div>',
+          '<div class="cmd-line">  TCP    192.168.1.100:49153  203.0.113.42:443       ESTABLISHED</div>',
+          '<div class="cmd-line"></div>',
+          '<div class="cmd-line"><span class="cmd-prompt">C:\\Users\\User></span> tasklist</div>',
+          '<div class="cmd-line">イメージ名                     PID セッション名     セッション# メモリ使用</div>',
+          '<div class="cmd-line">========================= ======== ================ =========== ============</div>',
+          '<div class="cmd-line">TeamViewer.exe                3456 Console                    1     45,234 K</div>',
+          '<div class="cmd-line cmd-warning">RemoteAccess.exe              7890 Console                    1     23,456 K</div>',
+          '<div class="cmd-line"></div>',
+          '<div class="cmd-line"><span class="cmd-prompt">C:\\Users\\User></span> <span class="cmd-blink">_</span></div>',
+        ];
+
+        let index = 0;
+        const interval = setInterval(() => {
+          if (index < commands.length) {
+            cmdContent.innerHTML += commands[index];
+            cmdContent.scrollTop = cmdContent.scrollHeight;
+            index++;
+          } else {
+            clearInterval(interval);
+          }
+        }, 400);
+      }
+
+      // ブラウザウィンドウを開く
+      function openBrowser() {
+        const browserWindow = document.getElementById("browserWindow");
+        browserWindow.style.left = "150px";
+        browserWindow.style.top = "150px";
+        browserWindow.style.width = "900px";
+        browserWindow.style.height = "600px";
+        browserWindow.classList.add("active");
+        document.getElementById("taskbar-browser").classList.add("active");
+      }
+
+      // ブラウザのURLを変更
+      function changeBrowserURL() {
+        const urlInput = document.querySelector(".browser-url");
+        const browserContent = document.getElementById("browserContent");
+
+        urlInput.value = "https://suspicious-site.example.com";
+        browserContent.innerHTML = `
+                <h1 style="color: #d32f2f;">⚠️ セキュリティ警告</h1>
+                <p style="font-size: 18px;">お使いのコンピューターがリモートアクセスされています。</p>
+                <p style="font-size: 24px; margin-top: 20px;"><strong>サポートに連絡: 0120-XXX-XXXX</strong></p>
+            `;
+      }
+
+      // 教育モーダルを表示
+      function showEducation() {
+        isAutomated = false;
+        document.getElementById("educationModal").style.display = "flex";
+      }
+
+      // デモを終了
+      function exitDemo() {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        }
+        window.location.href = "index.html";
+      }
+
+      // Escキーで全画面解除時の処理
+      document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement) {
+          document.getElementById("backLink").style.display = "block";
+        }
+      });
+
+      // 初期カーソル位置
+      updateCursor();
+    </script>
+  </body>
+</html>
